@@ -3,7 +3,8 @@
           PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
           "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-  <properties resource="net/thornydev/mybatis/test/config.properties"/>
+
+<!--   <properties resource="net/thornydev/mybatis/test/config.properties"/> -->
 
   <typeAliases>
     <typeAlias type="net.thornydev.mybatis.test.domain.Country" alias="Country" />
@@ -24,4 +25,5 @@
   <mappers>
     <mapper resource="net/thornydev/mybatis/test/koan03/koan03-mapper.xml"/>
   </mappers>
+  
 </configuration>

@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import net.thornydev.mybatis.test.domain.Country;
@@ -28,69 +29,77 @@ import org.junit.Test;
 // 3. the mapper xml file to have the right SQL queries and MyBatis XML entries
 public class Koan03 {
 
-  static SqlSessionFactory sessionFactory;
-  SqlSession session;
+	static SqlSessionFactory sessionFactory;
+	SqlSession session;
 
-  @BeforeClass
-  public static void setUpBeforeClass() throws Exception {
-    String resource = "net/thornydev/mybatis/test/koan03/koan03-config.xml";
-    InputStream inputStream = Resources.getResourceAsStream(resource);
-    sessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-    inputStream.close();
-  }
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 
-  @Before
-  public void setUp() throws Exception {
-    session = sessionFactory.openSession();
-  }
+		final String resource = "net/thornydev/mybatis/test/koan03/koan03-config.xml";
 
-  @After
-  public void tearDown() throws Exception {
-    if (session != null) session.close();
-  }
+		final InputStream inputStream = Resources.getResourceAsStream(resource);
 
-  @Test
-  public void learnToQueryViaXmlMapperReturningCountryDomainObject() throws Exception {
-    Country c = session.selectOne("selectFirstCountry");
+		final Properties properties = Util.properties(null);
 
-    assertNotNull(c);
-    assertEquals(1, c.getId());
-    assertEquals("Afghanistan", c.getCountry());
+		sessionFactory = new SqlSessionFactoryBuilder().build(inputStream,
+				"development", properties);
 
-    assertNotNull(c.getLastUpdate());
-    String dateStr = c.getLastUpdate().toString();
-    assertTrue( Pattern.
-                compile("Feb\\s+15.+2006").
-                matcher( dateStr ).
-                find() );
-  }
+		inputStream.close();
 
-  @Test
-  public void learnToQueryViaXmlMapperReturningListOfCountries() throws Exception {
-    List<Country> lmap = session.selectList("selectAsListOfCountries");
+	}
 
-    assertEquals(109, lmap.size());
-    Country c109 = lmap.get(0);
+	@Before
+	public void setUp() throws Exception {
+		session = sessionFactory.openSession();
+	}
 
-    assertEquals(109, c109.getId());
-    assertEquals("Zambia", c109.getCountry());
-  }
+	@After
+	public void tearDown() throws Exception {
+		if (session != null)
+			session.close();
+	}
 
-  @Test
-  public void learnToQueryViaXmlMapperReturningHashMapOfCountriesKeyedById() throws Exception {
-    Map<Integer,Country> countriesMap = session.selectMap("selectAsMapOfCountries", "id");
+	@Test
+	public void learnToQueryViaXmlMapperReturningCountryDomainObject()
+			throws Exception {
+		final Country c = session.selectOne("selectFirstCountry");
 
-    assertEquals(109, countriesMap.size());
+		assertNotNull(c);
+		assertEquals(1, c.getId());
+		assertEquals("Afghanistan", c.getCountry());
 
-    Country c33 = countriesMap.get(33);
-    assertEquals(33, c33.getId());
-    assertEquals("Finland", c33.getCountry());
+		assertNotNull(c.getLastUpdate());
+		final String dateStr = c.getLastUpdate().toString();
+		assertTrue(Pattern.compile("Feb\\s+15.+2006").matcher(dateStr).find());
+	}
 
-    assertNotNull(c33.getLastUpdate());
-    String dateStr = c33.getLastUpdate().toString();
-    assertTrue( Pattern.
-                compile("Feb\\s+15.+2006").
-                matcher( dateStr ).
-                find() );
-  }
+	@Test
+	public void learnToQueryViaXmlMapperReturningListOfCountries()
+			throws Exception {
+		final List<Country> lmap = session
+				.selectList("selectAsListOfCountries");
+
+		assertEquals(109, lmap.size());
+		final Country c109 = lmap.get(0);
+
+		assertEquals(109, c109.getId());
+		assertEquals("Zambia", c109.getCountry());
+	}
+
+	@Test
+	public void learnToQueryViaXmlMapperReturningHashMapOfCountriesKeyedById()
+			throws Exception {
+		final Map<Integer, Country> countriesMap = session.selectMap(
+				"selectAsMapOfCountries", "id");
+
+		assertEquals(109, countriesMap.size());
+
+		final Country c33 = countriesMap.get(33);
+		assertEquals(33, c33.getId());
+		assertEquals("Finland", c33.getCountry());
+
+		assertNotNull(c33.getLastUpdate());
+		final String dateStr = c33.getLastUpdate().toString();
+		assertTrue(Pattern.compile("Feb\\s+15.+2006").matcher(dateStr).find());
+	}
 }
